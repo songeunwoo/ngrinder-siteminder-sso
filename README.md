@@ -28,6 +28,7 @@ ngrinder.sso.default.timezone=default_timezone_if_no_timezone_is_provided
 ngrinder.sso.domain=the_domain_name_of_ngrinder
 ngrinder.sso.cookiename=the_cookiename_name_of_ngrinder
 '''
+
 ** This completly depends on the your siteminder configuration, please ask to your siteminder administrator.
 
 ## How to 
