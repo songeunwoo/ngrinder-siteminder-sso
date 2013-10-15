@@ -13,7 +13,7 @@ ngrinder-siteminder-sso is the ngrinder plugin which allows users who passed sit
 ** atlas-package
 * copy the packaged plugin to ${NGRINDER_HOME}/plugins/
 
-## How to configure 
+## How to configure sso plugin
 * Open the system configuration editor in ngrinder
 * Provide following configurations.
 '''
@@ -29,6 +29,7 @@ ngrinder.sso.domain=the_domain_name_of_ngrinder
 ngrinder.sso.cookiename=the_cookiename_name_of_ngrinder
 '''
 
-** This completly depends on the your siteminder configuration, please ask to your siteminder administrator.
+This completly depends on the your siteminder configuration, please ask to your siteminder administrator.
 
-## How to 
+## How to configure apache.
+* Please ask your siteminder administrator.
