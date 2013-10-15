@@ -32,4 +32,6 @@ ngrinder.sso.cookiename=the_cookiename_name_of_ngrinder
 This completly depends on the your siteminder configuration, please ask to your siteminder administrator.
 
 ## How to configure apache.
-* Please ask your siteminder administrator.
+* Please ask your siteminder administrator to setup the apache.
+  * You should ask him the provide the id, name, email, cellphone, timezone, locale in the headers to the backend WAS.
+* Add the local login page.
