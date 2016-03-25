@@ -5,24 +5,47 @@
 	<artifactId>siteminder-sso</artifactId>
 	<version>0.0.3</version>
 	<name>siteminder-sso</name>
-	<packaging>atlassian-plugin</packaging>
+	<description>ngrinder-siteminder-sso Plugin Framework for Java</description>
+	
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.7</java.version>
+		<ngrinder.core.version>3.4</ngrinder.core.version>
+		<plugin.id>siteminder-sso</plugin.id>
+		<plugin.class>org.ngrinder.sso.SiteminderSSOPlugin</plugin.class>
+		<plugin.version>4.0.0</plugin.version>
+		<plugin.provider>NAVER</plugin.provider>
+		<plugin.dependencies />
+	</properties>
+
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>com.atlassian.maven.plugins</groupId>
-				<artifactId>maven-amps-plugin</artifactId>
-				<version>4.1.6</version>
-				<extensions>true</extensions>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
 				<configuration>
-					<products>
-						<product>
-							<id>refapp</id>
-							<version>4.1.6</version>
-						</product>
-					</products>
+					<archive>
+						<manifestEntries>
+							<plugin-Id>${plugin.id}</plugin-Id>
+							<plugin-Class>${plugin.class}</plugin-Class>
+							<plugin-Version>${plugin.version}</plugin-Version>
+							<plugin-Provider>${plugin.provider}</plugin-Provider>
+							<plugin-Dependencies>${plugin.dependencies}</plugin-Dependencies>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
 					<source>1.6</source>
@@ -30,57 +53,24 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>com.atlassian.maven.plugins</groupId>
-										<artifactId>maven-amps-plugin</artifactId>
-										<versionRange>[3.10.1,)</versionRange>
-										<goals>
-											<goal>compress-resources</goal>
-											<goal>copy-bundled-dependencies</goal>
-											<goal>filter-plugin-descriptor</goal>
-											<goal>generate-manifest</goal>
-											<goal>generate-rest-docs</goal>
-											<goal>filter-test-plugin-descriptor</goal>
-											<goal>
-												copy-test-bundled-dependencies
-											</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 	<repositories>
 		<repository>
-			<id>nhnopensource.maver.repo.snapshot</id>
-			<url>https://github.com/nhnopensource/nhnopensource.maven.repo/raw/master/releases</url>
+			<id>maven-repo</id>
+			<name>Official Repository</name>
+			<url>http://repo1.maven.org/maven2</url>
+		</repository>
+		<repository>
+			<id>ngrinder.maven.repo</id>
+			<url>https://github.com/naver/ngrinder/raw/ngrinder.maven.repo/releases</url>
 		</repository>
 	</repositories>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.ngrinder</groupId>
 			<artifactId>ngrinder-core</artifactId>
-			<version>3.2.1</version>
+			<version>${ngrinder.core.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -138,7 +128,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+		<dependency>
+			<groupId>ro.fortsoft.pf4j</groupId>
+			<artifactId>pf4j</artifactId>
+			<version>0.12.0</version>
+		</dependency>
 	</dependencies>
 
 </project>

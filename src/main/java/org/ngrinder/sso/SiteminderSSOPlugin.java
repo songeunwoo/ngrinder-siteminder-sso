@@ -7,51 +7,59 @@ import net.grinder.util.NoOp;
 import org.ngrinder.extension.OnLoginRunnable;
 import org.ngrinder.model.Role;
 import org.ngrinder.model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.ngrinder.sso.SiteMinderFilter.SiteMinderFilterExtension;
 import org.springframework.security.authentication.BadCredentialsException;
 
-public class SiteminderSSOPlugin implements OnLoginRunnable {
-	@SuppressWarnings("unused")
-	private static final Logger LOGGER = LoggerFactory.getLogger(SiteminderSSOPlugin.class);
+import ro.fortsoft.pf4j.Extension;
+import ro.fortsoft.pf4j.Plugin;
+import ro.fortsoft.pf4j.PluginWrapper;
 
-	SiteminderSSOPlugin() {
+public class SiteminderSSOPlugin extends Plugin {
+
+	public SiteminderSSOPlugin(PluginWrapper wrapper) {
+		super(wrapper);
 	}
 
-	@Override
-	public User loadUser(final String userId) {
-		Map<String, String> map = SiteMinderFilter.threadStorage.get();
-		User user = null;
-		if (map != null) {
-			user = new User();
-			user.setUserId(userId);
-			user.setUserName(getString(map, "name", ""));
-			user.setEmail(getString(map, "email", ""));
-			user.setMobilePhone(getString(map, "cellphone", ""));
-			user.setAuthProviderClass(SiteminderSSOPlugin.this.getClass().getName());
-			user.setEnabled(true);
-			user.setExternal(true);
-			user.setRole(Role.USER);
-			SiteMinderFilter.threadStorage.remove();
+	@Extension
+	public static class SiteminderSSOPluginExtension implements OnLoginRunnable {
+
+		@Override
+		public User loadUser(final String userId) {
+			Map<String, String> map = SiteMinderFilterExtension.threadStorage.get();
+			User user = null;
+			if (map != null) {
+				user = new User();
+				user.setUserId(userId);
+				user.setUserName(getString(map, "name", ""));
+				user.setEmail(getString(map, "email", ""));
+				user.setMobilePhone(getString(map, "cellphone", ""));
+				user.setAuthProviderClass(SiteminderSSOPluginExtension.this.getClass().getName());
+				user.setEnabled(true);
+				user.setExternal(true);
+				user.setRole(Role.USER);
+				SiteMinderFilterExtension.threadStorage.remove();
+			}
+			return user;
 		}
-		return user;
-	}
 
-	private String getString(Map<String, String> map, String key, String defaultValue) {
-		String value = map.get(key);
-		if (value == null) {
-			return defaultValue;
+		private String getString(Map<String, String> map, String key, String defaultValue) {
+			String value = map.get(key);
+			if (value == null) {
+				return defaultValue;
+			}
+			return value;
 		}
-		return value;
-	}
 
-	@Override
-	public boolean validateUser(String userId, String password, String encPass, Object encoder, Object salt) {
-		throw new BadCredentialsException("no validation is permitted");
-	}
+		@Override
+		public boolean validateUser(String userId, String password, String encPass, Object encoder,
+			Object salt) {
+			throw new BadCredentialsException("no validation is permitted");
+		}
 
-	@Override
-	public void saveUser(User user) {
-		NoOp.noOp();
+		@Override
+		public void saveUser(User user) {
+			NoOp.noOp();
+		}
+
 	}
 }
