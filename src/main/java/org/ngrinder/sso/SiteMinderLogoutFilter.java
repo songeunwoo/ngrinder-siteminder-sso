@@ -2,7 +2,6 @@ package org.ngrinder.sso;
 
 import java.io.IOException;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -12,52 +11,72 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.ngrinder.extension.OnServletFilter;
 import org.ngrinder.service.IConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class SiteMinderLogoutFilter implements Filter {
+import ro.fortsoft.pf4j.Extension;
+import ro.fortsoft.pf4j.Plugin;
+import ro.fortsoft.pf4j.PluginWrapper;
 
-	private IConfig config;
+public class SiteMinderLogoutFilter extends Plugin {
 
-	public SiteMinderLogoutFilter(IConfig config) {
-		this.config = config;
+	public SiteMinderLogoutFilter(PluginWrapper wrapper) {
+		super(wrapper);
 	}
 
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-	}
+	@Extension
+	public static class SiteMinderLogoutFilterExtension implements OnServletFilter {
 
-	@Override
-	public void doFilter(final ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-			ServletException {
-		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-		if (httpServletRequest.getRequestURI().endsWith("/logout")) {
-			HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-			String domain = config.getSystemProperties().getProperty("ngrinder.sso.domain", "");
-			String cookiename = config.getSystemProperties().getProperty("ngrinder.sso.cookiename", "");
-			if (StringUtils.isNotBlank(cookiename) && StringUtils.isNotBlank(domain)) {
-				Cookie cookie = new Cookie(cookiename, "");
-				cookie.setDomain(domain);
-				cookie.setMaxAge(0);
-				cookie.setPath("/");
-				httpServletResponse.addCookie(cookie);
-				Cookie smText = new Cookie("SMTEXT", "");
-				smText.setDomain(domain);
-				smText.setMaxAge(0);
-				smText.setPath("/");
-				httpServletResponse.addCookie(smText);
-			}
-			Cookie switchUser = new Cookie("switchUser", "");
-			switchUser.setMaxAge(0);
-			switchUser.setPath("/");
-			httpServletResponse.addCookie(switchUser);
+		private String[] cookiesString;
+		private String[] cookiesDomain;
+
+		@Autowired
+		public void setSpringExtensionFactory(IConfig config) {
+			this.cookiesString = config.getControllerProperties().getProperty(
+				"ngrinder.sso.domain", "").split(",");
+			this.cookiesDomain = config.getControllerProperties().getProperty(
+				"ngrinder.sso.cookiename", "").split(",");
 		}
-		chain.doFilter(request, response);
+
+		@Override
+		public void init(FilterConfig filterConfig) throws ServletException {
+		}
+
+		@Override
+		public void doFilter(final ServletRequest request, ServletResponse response,
+			FilterChain chain) throws IOException, ServletException {
+			HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+			if (httpServletRequest.getRequestURI().endsWith("/logout")) {
+				HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+				String domain = "";
+				String serverName = request.getServerName();
+				for (String each : this.cookiesDomain) {
+					if (serverName.contains(each)) {
+						domain = each;
+						break;
+					}
+				}
+				for (String each : this.cookiesString) {
+					Cookie cookie = new Cookie(each, "");
+					cookie.setDomain(domain);
+					cookie.setMaxAge(0);
+					cookie.setPath("/");
+					httpServletResponse.addCookie(cookie);
+				}
+				Cookie switchUser = new Cookie("switchUser", "");
+				switchUser.setMaxAge(0);
+				switchUser.setPath("/");
+				switchUser.setDomain(serverName);
+				httpServletResponse.addCookie(switchUser);
+			}
+			chain.doFilter(request, response);
+
+		}
+
+		@Override
+		public void destroy() {
+		}
 
 	}
-
-	@Override
-	public void destroy() {
-	}
-
 }

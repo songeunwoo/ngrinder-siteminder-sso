@@ -1,8 +1,0 @@
-<atlassian-plugin key="nhn-sso" name="NHN SSO" plugins-version="2">
-	<plugin-info>
-		<version>1.0.0</version>
-	</plugin-info>
-	<on-login key="siteminder-plugin" class="org.ngrinder.sso.SiteMinderLogoutFilter" />
-	<on-preauth-servletfilter key="siteminder-filter-plugin" class="org.ngrinder.sso.SiteMinderFilter" />
-	<on-servletfilter key="siteminder-logout-filter-plugin" class="org.ngrinder.sso.SiteMinderLogoutFilter" />
-</atlassian-plugin>
